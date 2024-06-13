@@ -328,6 +328,7 @@ class Flash:
             # Address must be a multiple of size
             assert (addr % size) == 0
             val = (size_val << 0) | (addr_val << 16)
+            assert val < 1<<32
             data.append(val)
 
         self.target.write_memory_block32(self.begin_data, data)
