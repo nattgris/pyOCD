@@ -577,7 +577,12 @@ class FlashBuilder(MemoryBuilder):
             # Reset same flag for all pages to enable rescanning
             for sector in self.sector_list:
                 sector.mark_all_pages_unknown()
-            self._scan_pages_for_same(progress_cb)
+
+            if fast_verify and self.flash.get_flash_info().crc_supported:
+                self._analyze_pages_with_crc32(assume_estimate_correct=True)
+            else:
+                self._scan_pages_for_same()
+
             failed_pages = [page for page in self.page_list if page.same is False]
             if failed_pages:
                 LOG.debug("Verify failed for pages {}".format(failed_pages))
